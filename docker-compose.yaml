@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/django
+    environment:
+      - POSTGRES_DB=Generic
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=abdullah
+    ports:
+      - '8000:8000'
+    image: app:django
+    container_name: myapp_c
+    links:
+      - db:db
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - db
+    networks:
+      backend:
+  db:
+      image: postgres
+      ports:
+        - "5432:5432"
+      volumes: 
+        - pgdata:/var/lib/postgresql/data
+        - pgconf:/etc/postgresql
+        - pglog:/var/log/postgresql
+      environment:
+        - POSTGRES_DB=Generic
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=abdullah
+      container_name: postgres_db
+      networks:
+        backend:
+volumes:
+  pgdata:
+    driver: local
+  pgconf:
+    driver: local
+  pglog: 
+    driver: local
+networks:
+  backend:
+
+
